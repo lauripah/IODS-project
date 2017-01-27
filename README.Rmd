@@ -1,0 +1,9 @@
+---
+output:
+  html_document:
+    theme: spacelab
+---
+
+Write something about the course.  
+[Link to diary](https://lauripah.github.io/IODS-project/)
+
