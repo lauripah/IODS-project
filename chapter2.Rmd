@@ -1,7 +1,54 @@
-# Insert chapter 2 title here
+# Chapter 2
 
-*Describe the work you have done this week and summarize your learning.*
+*Regression and model validation*
 
 - Describe your work and results clearly. 
 - Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods
 - Assume the reader has no previous knowledge of your data or the more advanced methods you are using  
+
+Students2014 data (or learning2014 in my case) has 166 observations of 7 variables. The variables are gender, age, attitude (shows persons attitude towards statistics), deep (deep learning), stra (strategic questions), surf (surface learning) and points from exam.  
+
+```{r warning = F}
+setwd("~/IODS/IODS-project/data")
+learning2014<-read.table("learning2014.txt")
+
+library(ggplot2)
+library(GGally)
+
+p <- ggpairs(learning2014, mapping = aes(col = gender), lower = list(combo = wrap("facethist", bins = 20)))
+p
+```
+
+Matrix above is called scatter matrix. For example it shows correlation and scatterplots between all variables.
+
+
+```{r}
+setwd("~/IODS/IODS-project/data")
+learning2014<-read.table("learning2014.txt")
+
+library(ggplot2)
+
+p1 <- ggplot(learning2014, aes(x = attitude, y = points, col=gender))
+p2 <- p1 + geom_point()
+p3 <- p2 + geom_smooth(method = "lm")
+p4 <- ggtitle("Student's attitude versus exam points")
+p2
+p3
+
+
+```
+
+The plot above shows attitude versus points in exam with regression lines separated by gender.  
+
+```{r}
+my_model2 <- lm(points ~ attitude, data = learning2014)
+summary(my_model2)
+```
+
+The summary above shows summary of a regression model in which the dependent variable is exam points and the explanatory variable is attitude. I also tried using deep and surf as explanatory variables but they were not statistifically significant because the gotten p-value was > 0.05. It seems that attitude towards statistics has affects the amount of points in exam. Summary shows R-squared value of 0.1906. This value shows linear relation between attitude and points. Because of such low value, the linear relation between variables is fairly low.  
+
+```{r}
+plot(my_model2,which=c(1,2,5),par(mfrow = c(2,2)))
+```
+
+The first plot shows where the residuals are compared to fitted values of points ~ attitude. Second plot shows normal QQ-plot which standardizes the values to a standard normal distribution N~(0,1). The new residuals follow the fit line very well. The third plot shows how much leverage a single residual has over the fit line. The highest value of leverage of a single residual is only about 0.04 which is very low. All in all it seems to be a good model.
