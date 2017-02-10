@@ -1,0 +1,31 @@
+# Chapter 3
+
+*Logistic regression*
+
+First I read the data (alc.csv) created in data wrangling exercise. 
+
+```{r}
+setwd("~/IODS/IODS-project/data")
+alc <- read.csv("alc.csv", sep = ",")
+alc <- alc[,2:36]
+colnames(alc)
+```
+
+Code above prints out names of the columns in the alc-data. There are some background questions such as school, sex and age, some questions about school such as studytime and whether the person has taken extra paid classes and the focus of this data, the use of alcohol and health status.  
+
+My four interesting variables to study are studytime, failures, absences and nursery. Studytime shows weekly study time in which value 1 is less than 2 hours, 2 is 2 to 5 hours, 3 is 5 to 10 hours and 4 is more than 10 hours. I think this has a effect on use of alcohol because when you are studying you don't have time to use alcohol. Failures show how many times has a person failed to pass a test. Failure tells how many times a person has failed the class. This variable is coded in a numeric way; 1,2,3 or 4 or more times. Maybe a 4 in this means higher use of alcohol. Absences are number of school absences which probably also correlates to alcohol use. Nursery variable tells if a person attended nursery school. False could lead to higher use of alcohol.  
+
+```{r}
+m <- glm(high_use ~ failures + absences + nursery + studytime, data = alc, family = "binomial")
+m
+```
+
+Code above prints a table with coefficient values. Coefficient values show odds ratios between a unit change (vs no change) in the corresponding explanatory variable which in this case is high_use. Surprisingly absences has such low coefficient value. 
+
+```{r}
+library(ggplot2)
+g1 <- ggplot(alc, aes(x = high_use, y = absences, col = nursery))
+g1 + geom_boxplot() + ylab("absences")
+```
+
+Plot above shows high usage of alcohol on X-axis and absences on Y-axis with nursery being the color. It seems that people who attended nursery school actually have more absences. 
