@@ -1,0 +1,58 @@
+#Chapter 4
+
+*Clustering and classification*
+
+First I loaded the Boston data from MASS package.
+
+```{r}
+library(MASS)
+data("Boston")
+dim(Boston)
+```
+You can see that the Boston-data is a dataset in which there are 506 observations of 14 variables. The Boston-data is about housing values in suburbs of Boston.
+```{r}
+str(Boston)
+```
+The variables vary from crime rate per capita to whether the suburb bounds river Charles. 
+```{r}
+summary(Boston)
+```
+Summary of the data. 
+
+```{r}
+boston_scaled <- scale(Boston)
+boston_scaled <- as.data.frame(boston_scaled)
+summary(boston_scaled)
+
+```
+Using the scale() -function I standardized the data. Now every single variable has mean of 0.
+
+```{r}
+scaled_crim <- boston_scaled$crim
+bins <- quantile(scaled_crim)
+crime <- cut(scaled_crim, breaks = bins, include.lowest = TRUE)
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+boston_scaled <- data.frame(boston_scaled, crime)
+n <- nrow(boston_scaled)
+ind <- sample(n,  size = n * 0.8)
+train <- boston_scaled[ind,]
+test <- boston_scaled[-ind,]
+
+```
+Code above creates the train and test datas.
+
+```{r}
+lda.fit <- lda(crime ~ . , data = train)
+lda.fit
+classes <- as.numeric(train$crime)
+plot(lda.fit, dimen = 2,col = classes, pch = classes)
+```
+This is the linear discriminant analysis biplot.
+
+```{r}
+correct_classes <- test$crime
+test <- dplyr::select(test, -crime)
+lda.pred <- predict(lda.fit, newdata = test)
+table(correct = correct_classes, predicted = lda.pred$class)
+```
+
