@@ -1,0 +1,52 @@
+#Chapter 5
+
+*Dimensionality reduction techniques*
+
+First of all ignore all these warning messages. I couldn't get rid of those.
+
+```{r}
+setwd("~/IODS/IODS-project/data")
+
+human <- read.csv("human.csv", stringsAsFactors = F, sep=",", row.names = 1)
+
+library(ggplot2)
+library(dplyr)
+library(stringr)
+library(GGally)
+
+```
+First I loaded the data and necessary packages.  
+
+```{r}
+str(human)
+dim(human)
+```
+Above you can see the structure and dimensions of the human.csv data. This data has 155 observations of 8 variables. Its variables describe human values such as life expectancy and expected length of education.  
+
+```{r}
+ggpairs(human)
+```
+Above you can see visualization of the data. The variables have surprisingly large correlation values between variables. For example -0.857 correlation between maternal mortality and life expectancy. Expected lenght of education seems to be quite normally distributed.  
+
+```{r}
+pca_human <- prcomp(human)
+summary(pca_human)
+
+```
+
+Above you can see the summary of the principal components.
+
+```{r}
+biplot(pca_human, choices = 1:2, cex = c(0.8, 1), col = c("grey40", "deeppink2"))
+```
+
+You really can't tell much of the non-standardized biplot. Its a mess. Now let's standardize the data and plot it.
+
+```{r}
+human_std <- scale(human)
+pca_human <- prcomp(human_std)
+biplot(pca_human, choices = 1:2, cex = c(0.8, 1), col = c("grey40", "deeppink2"))
+
+```
+
+As you can see the distribution is now distributed more all-around. This is because the data has been changed to a standard normal distribution. 
